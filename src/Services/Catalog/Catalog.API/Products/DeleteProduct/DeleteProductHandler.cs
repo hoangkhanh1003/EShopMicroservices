@@ -2,7 +2,7 @@
 {
     public record DeleteProductCommand(Guid Id) : ICommand<DeleteProductResult>;
 
-    public record DeleteProductResult(bool isSuccess);
+    public record DeleteProductResult(bool IsSuccess);
 
     internal class DeleteProductCommandHandler(IDocumentSession session, ILogger<DeleteProductCommandHandler> logger) : ICommandHandler<DeleteProductCommand, DeleteProductResult>
     {
@@ -17,7 +17,7 @@
                 throw new ProductNotFoundException();
             }
 
-            session.Delete(product);
+            session.Delete<Product>(command.Id);
             await session.SaveChangesAsync(cancellationToken);
 
             return new DeleteProductResult(true);

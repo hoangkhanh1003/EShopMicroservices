@@ -1,20 +1,31 @@
 ﻿namespace Catalog.API.Products.CreateProduct
 {
-    #region Create record
     public record CreateProductCommand(
-        string Name, 
-        List<string> Category, 
-        string Description, 
-        string ImageFile, 
+        string Name,
+        List<string> Category,
+        string Description,
+        string ImageFile,
         decimal Price) : ICommand<CreateProductResult>;
 
     public record CreateProductResult(Guid Id);
-    #endregion
 
-    internal class CreateProductCommandHandler(IDocumentSession session) : ICommandHandler<CreateProductCommand, CreateProductResult>
+    public class CreateProductCommandValidator : AbstractValidator<CreateProductCommand>
+    {
+        public CreateProductCommandValidator()
+        {
+            RuleFor(x => x.Name).NotEmpty().WithMessage("Name Is Required");
+            RuleFor(x => x.Category).NotEmpty().WithMessage("Category Is Required");
+            RuleFor(x => x.ImageFile).NotEmpty().WithMessage("ImageFile Is Required");
+            RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price Must Be Greater Than");
+        }
+    }
+
+    internal class CreateProductCommandHandler(IDocumentSession session, ILogger<CreateProductCommandHandler> logger) : ICommandHandler<CreateProductCommand, CreateProductResult>
     {
         public async Task<CreateProductResult> Handle(CreateProductCommand command, CancellationToken cancellationToken)
         {
+            logger.LogInformation("CreateProductHandler.Handler called with {@Command}", command);
+
             Product product = new Product
             {
                 Name = command.Name,
