@@ -7,18 +7,11 @@
         {
             app.MapGet("/products/category/{category}", async (string category, ISender sender) =>
             {
-                try
-                {
-                    var result = await sender.Send(new GetProductByCategoryQuery(category));
+                GetProductByCategoryResult result = await sender.Send(new GetProductByCategoryQuery(category));
 
-                    var response = result.Adapt<GetProductByCategoryResponse>();
+                GetProductByCategoryResponse response = result.Adapt<GetProductByCategoryResponse>();
 
-                    return Results.Ok(response);
-                }
-                catch (Exception)
-                {
-                    return Results.Content("Server Error");
-                }
+                return Results.Ok(response);
             })
                 .WithName("GetProductByCategory")
                 .Produces<GetProductByCategoryResponse>(StatusCodes.Status200OK)

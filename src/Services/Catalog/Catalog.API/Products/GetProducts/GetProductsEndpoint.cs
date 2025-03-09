@@ -9,9 +9,9 @@
             {
                 try
                 {
-                    var result = await sender.Send(new GetProductsQuery());
+                    GetProductsResult result = await sender.Send(new GetProductsQuery());
 
-                    var response = result.Adapt<GetProductsResponse>();
+                    GetProductsResponse response = result.Adapt<GetProductsResponse>();
 
                     return Results.Ok(response);
                 }

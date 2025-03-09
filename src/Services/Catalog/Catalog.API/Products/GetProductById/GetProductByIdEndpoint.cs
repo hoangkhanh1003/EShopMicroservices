@@ -7,18 +7,11 @@
         {
             app.MapGet("/products/{id}", async (Guid id , ISender sender) =>
             {
-                try
-                {
-                    var result = await sender.Send(new GetProductByIdQuery(id));
+                GetProductByIdResult result = await sender.Send(new GetProductByIdQuery(id));
 
-                    var response = result.Adapt<GetProductByIdResponse>();
+                GetProductByIdResponse response = result.Adapt<GetProductByIdResponse>();
 
-                    return Results.Ok(response);
-                }
-                catch
-                {
-                    return Results.Content("Server Error");
-                }
+                return Results.Ok(response);
             })
                 .WithName("GetProductById")
                 .Produces<GetProductByIdResponse>(StatusCodes.Status200OK)

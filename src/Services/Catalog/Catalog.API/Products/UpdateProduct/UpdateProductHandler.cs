@@ -8,7 +8,21 @@
         string ImageFile, 
         decimal Price) : ICommand<UpdateProductResult>;
 
-    public record UpdateProductResult(bool isSuccess);
+    public record UpdateProductResult(bool IsSuccess);
+
+    public class UpdateProductCommandValidator : AbstractValidator<UpdateProductCommand>
+    {
+        public UpdateProductCommandValidator()
+        {
+            RuleFor(x => x.Id)
+                .NotEmpty()
+                .WithMessage("Product Id Is Required");
+            RuleFor(x => x.Name)
+                .NotEmpty().WithMessage("Name Is Required")
+                .Length(2, 150).WithMessage("Name Must Be Between 2 And 150 Characters");
+            RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price Must Be Greater Than");
+        }
+    }
 
     internal class UpdateProductCommandHandler(IDocumentSession session, ILogger<UpdateProductCommandHandler> logger) : ICommandHandler<UpdateProductCommand, UpdateProductResult>
     {
@@ -20,7 +34,7 @@
 
             if (product is null)
             {
-                throw new ProductNotFoundException();
+                throw new ProductNotFoundException(command.Id);
             }
 
             product.Name = command.Name;
