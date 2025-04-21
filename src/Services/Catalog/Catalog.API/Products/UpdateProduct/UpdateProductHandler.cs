@@ -17,19 +17,19 @@
             RuleFor(x => x.Id)
                 .NotEmpty()
                 .WithMessage("Product Id Is Required");
+
             RuleFor(x => x.Name)
                 .NotEmpty().WithMessage("Name Is Required")
                 .Length(2, 150).WithMessage("Name Must Be Between 2 And 150 Characters");
+
             RuleFor(x => x.Price).GreaterThan(0).WithMessage("Price Must Be Greater Than");
         }
     }
 
-    internal class UpdateProductCommandHandler(IDocumentSession session, ILogger<UpdateProductCommandHandler> logger) : ICommandHandler<UpdateProductCommand, UpdateProductResult>
+    internal class UpdateProductCommandHandler(IDocumentSession session) : ICommandHandler<UpdateProductCommand, UpdateProductResult>
     {
         public async Task<UpdateProductResult> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
         {
-            logger.LogInformation("UpdateProductHandler.Handler called with {@Command}", command);
-
             var product = await session.LoadAsync<Product>(command.Id, cancellationToken);
 
             if (product is null)
