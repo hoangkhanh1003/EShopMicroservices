@@ -1,6 +1,10 @@
+using Discount.Grpc;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+
+// application services
 builder.Services.AddCarter();
 builder.Services.AddMediatR(config =>
 {
@@ -23,6 +27,14 @@ builder.Services.AddStackExchangeRedisCache(options =>
 {
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
+
+// Grpc Services
+builder.Services.AddGrpcClient<DiscountProtoService.DiscountProtoServiceClient>(option =>
+{
+    option.Address = new Uri(builder.Configuration["GrpcSettings:DiscountUrl"]!);
+});
+// Todo - add Grpc Service
+
 
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
